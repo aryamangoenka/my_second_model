@@ -14,43 +14,48 @@ with open(model_path, 'rb') as f:
 
 def predict(input_data: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Predict using the trained logistic regression model.
+    Predict sentiment (positive/negative) from text input.
     
     Args:
-        input_data: Dictionary with features as values
+        input_data: Dictionary with text input
         
     Returns:
-        Dictionary with prediction and confidence
+        Dictionary with sentiment prediction and confidence
     """
     try:
-        # Extract features from input data
-        features = [
-            input_data.get("feature_1", 0.0),
-            input_data.get("feature_2", 0.0), 
-            input_data.get("feature_3", 0.0),
-            input_data.get("feature_4", 0.0)
-        ]
-        
-        # Convert to numpy array and reshape for single prediction
-        X = np.array(features).reshape(1, -1)
+        # Extract text from input data
+        text = input_data.get("text", "")
+        if not text:
+            raise ValueError("No text provided for sentiment analysis")
+            
+        # Simple feature extraction (example)
+        features = np.array([
+            len(text),  # Length of text
+            text.count('!'),  # Number of exclamation marks
+            text.count('?'),  # Number of question marks
+            len([w for w in text.split() if w.isupper()])  # Number of uppercase words
+        ]).reshape(1, -1)
         
         # Get prediction and probability
-        prediction = model.predict(X)[0]
-        probabilities = model.predict_proba(X)[0]
+        prediction = model.predict(features)[0]
+        probabilities = model.predict_proba(features)[0]
         confidence = float(max(probabilities))
         
+        # Map prediction to sentiment
+        sentiment = "positive" if prediction == 1 else "negative"
+        
         return {
-            "prediction": int(prediction),
+            "sentiment": sentiment,
             "confidence": confidence,
             "probabilities": {
-                "class_0": float(probabilities[0]),
-                "class_1": float(probabilities[1])
+                "negative": float(probabilities[0]),
+                "positive": float(probabilities[1])
             }
         }
         
     except Exception as e:
         return {
-            "prediction": None,
+            "sentiment": None,
             "confidence": 0.0,
             "error": str(e)
         }
