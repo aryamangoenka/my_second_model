@@ -23,6 +23,10 @@ def predict(input_data: Dict[str, Any]) -> Dict[str, Any]:
         Dictionary with prediction and confidence
     """
     try:
+        # Handle the data wrapper from the API
+        if isinstance(input_data, dict) and 'data' in input_data:
+            input_data = input_data['data']
+            
         # Extract text from input data
         text = input_data.get("text", "")
         if not text:
