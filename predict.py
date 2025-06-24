@@ -20,7 +20,7 @@ def predict(input_data: Dict[str, Any]) -> Dict[str, Any]:
         input_data: Dictionary with text input
         
     Returns:
-        Dictionary with sentiment prediction and confidence
+        Dictionary with prediction and confidence
     """
     try:
         # Extract text from input data
@@ -45,7 +45,7 @@ def predict(input_data: Dict[str, Any]) -> Dict[str, Any]:
         sentiment = "positive" if prediction == 1 else "negative"
         
         return {
-            "sentiment": sentiment,
+            "prediction": sentiment,
             "confidence": confidence,
             "probabilities": {
                 "negative": float(probabilities[0]),
@@ -55,7 +55,7 @@ def predict(input_data: Dict[str, Any]) -> Dict[str, Any]:
         
     except Exception as e:
         return {
-            "sentiment": None,
+            "prediction": None,
             "confidence": 0.0,
             "error": str(e)
         }
